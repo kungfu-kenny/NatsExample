@@ -17,6 +17,6 @@ with NATSClient(url=nats_url) as client:
             subject=nats_subject, 
             payload=develop_random_data(i)
         )
-        time.sleep(0.01)
+        time.sleep(0.02)
         print(f'Sent Index: ', i)
         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')

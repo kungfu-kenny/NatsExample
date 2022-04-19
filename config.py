@@ -8,12 +8,12 @@ folder_use_plot =  os.path.join(folder_current, folder_plot)
 
 string_range = 30
 
-index_begin, index_end = 1, 100001
+index_begin, index_end = 1, 2000001
 
-nats_subject = 'test_subject_2'
+nats_subject = 'test_subject_3'
 nats_url = "nats://127.0.0.1:4222"
 
 value_x = [
-    100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
-    1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000,
+    100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000,
+    1100000, 1200000, 1300000, 1400000, 1500000, 1600000, 1700000, 1800000, 1900000, 2000000,
 ]
