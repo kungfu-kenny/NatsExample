@@ -1,0 +1,2 @@
+nats-py==2.1.0
+nats-python==0.8.0
