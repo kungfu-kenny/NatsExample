@@ -34,9 +34,12 @@ def get_file_name_json(value_input:bool=True) -> str:
     Input:  value_input = check values of the json
     Output: string with the selected to get name
     """
-    if value_input:
+    if value_input == True:
         return f"received_{nats_subject}_{get_date_current()}.json"
-    return f"merged_{nats_subject}.json"
+    elif value_input == False:
+        return f"merged_{nats_subject}.json"
+    elif value_input == '1':
+        return f"statistics_{nats_subject}.json"
 
 def develop_file_writes(callback_received:bytes) -> None:
     """
@@ -49,9 +52,9 @@ def develop_file_writes(callback_received:bytes) -> None:
     if os.path.exists(value_file):
         with open(value_file, 'r') as file_write:
             value_use = json.load(file_write)
-        value_use.append(json.loads(callback_received))
+        value_use.append(callback_received)
     else:
-        value_use = [json.loads(callback_received)]
+        value_use = [callback_received]
     with open(value_file, 'w') as file_write:
         json.dump(
             value_use, 
@@ -80,8 +83,26 @@ def develop_callback(message:object) -> None:
     Input:  message = received values of it
     Output: we dealed with the previous 
     """
-    develop_file_writes(message.payload)
-    print('Received Index: ', json.loads(message.payload).get('index', -1))
+    received = datetime.utcnow()
+    date_used = received.strftime('%Y-%m-%d %H:%M:%S.%f')
+    message_payload = json.loads(message.payload)
+    send = datetime.strptime(message_payload.get('date_created'), '%Y-%m-%d %H:%M:%S.%f')
+    proccessed = datetime.utcnow()
+    delta_full = proccessed - send
+    delta_proccessed = proccessed - received
+    delta_send = received - send
+    index = message_payload.pop('index')
+    message_payload.update(
+        {
+            'date_received': date_used, 
+            'date_processed': proccessed.strftime('%Y-%m-%d %H:%M:%S.%f'),
+            'delta_send': delta_send.microseconds/1000000 + delta_send.seconds + delta_send.days*60*60*24,
+            'delta_full': delta_full.microseconds/1000000 + delta_full.seconds + delta_full.days*60*60*24,
+            'delta_proccessed': delta_proccessed.microseconds/1000000 + delta_proccessed.seconds + delta_proccessed.days*60*60*24,
+        }
+    )
+    develop_file_writes(message_payload)
+    print('Received Index:', index)
     print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
 
 def merge_callback_result() -> None:
@@ -96,7 +117,7 @@ def merge_callback_result() -> None:
             list_merged.append(file)
         elif f"received_{nats_subject}" in file:
             list_merged.append(file)
-    for f in list_merged:
+    for f in sorted(list_merged):
         with open(os.path.join(folder_use, f), 'r') as read:
             value_use.extend(json.load(read))
     with open(os.path.join(folder_use, get_file_name_json(False)), 'w') as file_write:

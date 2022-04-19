@@ -4,11 +4,12 @@ from data_develop import develop_random_data
 from config import (
     index_begin,
     index_end,
-    nats_subject
+    nats_subject,
+    nats_url
 )
 
 
-with NATSClient() as client:
+with NATSClient(url=nats_url) as client:
     client.connect()
 
     for i in range(index_begin, index_end):
