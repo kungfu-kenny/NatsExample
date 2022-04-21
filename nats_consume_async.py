@@ -13,10 +13,14 @@ async def main(loop):
         subject = msg.subject
         reply = msg.reply
         data = msg.data.decode()
-        print("Received a message on '{subject} {reply}': {data}".format(
-            subject=subject, 
-            reply=reply, data=data)
+        print(
+            "Received a message on '{subject} {reply}': {data}".format(
+                subject=subject, 
+                reply=reply, 
+                data=data
+            )
         )
+        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
 
     sub = await nc.subscribe(nats_subject, cb=message_handler)
     await sub.unsubscribe(limit=3000000)

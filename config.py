@@ -10,7 +10,7 @@ string_range = 30
 
 index_begin, index_end = 1, 2000001
 
-nats_subject = 'test_subject_3'
+nats_subject = 'test_subject_4'
 nats_url = "nats://127.0.0.1:4222"
 
 value_x = [

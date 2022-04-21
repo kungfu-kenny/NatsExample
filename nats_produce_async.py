@@ -12,14 +12,18 @@ from config import (
 
 async def main():
     nc = await nats.connect(nats_url)
+    
     for i in range(index_begin, index_end):
         await nc.publish(
             nats_subject, 
-            develop_random_data(i)
+            payload=develop_random_data(i).encode()
         )
         sleep(0.02)
+        print(f'Sent Index: ', i)
+        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
     await nc.flush()
     await nc.close()
+
 
 if __name__ == '__main__':
     asyncio.run(main())
