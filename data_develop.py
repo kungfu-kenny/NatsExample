@@ -105,6 +105,34 @@ def develop_callback(message:object) -> None:
     print('Received Index:', index)
     print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
 
+async def develop_callback_async(message:object) -> None:
+    """
+    Function which is about to add the values to the callback
+    Input:  message = received values of it
+    Output: we dealed with the previous 
+    """
+    received = datetime.utcnow()
+    date_used = received.strftime('%Y-%m-%d %H:%M:%S.%f')
+    message_payload = json.loads(message.data.decode())
+    send = datetime.strptime(message_payload.get('date_created'), '%Y-%m-%d %H:%M:%S.%f')
+    proccessed = datetime.utcnow()
+    delta_full = proccessed - send
+    delta_proccessed = proccessed - received
+    delta_send = received - send
+    index = message_payload.pop('index')
+    message_payload.update(
+        {
+            'date_received': date_used, 
+            'date_processed': proccessed.strftime('%Y-%m-%d %H:%M:%S.%f'),
+            'delta_send': delta_send.microseconds/1000000 + delta_send.seconds + delta_send.days*60*60*24,
+            'delta_full': delta_full.microseconds/1000000 + delta_full.seconds + delta_full.days*60*60*24,
+            'delta_proccessed': delta_proccessed.microseconds/1000000 + delta_proccessed.seconds + delta_proccessed.days*60*60*24,
+        }
+    )
+    develop_file_writes(message_payload)
+    print('Received Index:', index)
+    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+
 def merge_callback_result() -> None:
     """
     Function which is dedicated to use value
